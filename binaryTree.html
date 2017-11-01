@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        //定义二叉树原型
+        function binaryTree(){
+            var node = function(key){
+                this.key = key;
+                this.left = null;
+                this.right = null;
+            }
+            //二叉树插入
+            var insertNode = function(node,newNode){
+                while(node.key !== newNode.key){
+                    if(newNode.key < node.key){
+                        if(node.left === null){
+                            node.left = newNode;
+                            break;
+                        }else{
+                            node = node.left
+                        }
+                    }else{
+                        if(node.right === null){
+                            node.right = newNode;
+                            break;
+                        }else{
+                            node = node.right;
+                        }
+                    }
+                }
+            }
+            //根节点
+            var root = null;
+
+            this.insert = function (key){
+                var newNode = new node(key);
+                if(root === null){
+                    root = newNode;
+                }else{
+                    insertNode(root,newNode)
+                }
+            }
+            //前序遍历
+            var preOrderTraverseNode = function(node,callback){
+                if(node!==null){
+                    var arr = [];
+                    arr.push(node);
+                    var f;
+                    while(arr[0]){
+                        f = arr.pop();
+                        callback(f.key);
+                        if(f.right ){
+                            arr.push(f.right)
+                        }
+                                
+                        if(f.left){
+                            arr.push(f.left)
+                        }
+                    }
+                    arr = null;
+                    f = null;
+                    // callback(node.key);
+                    // preOrderTraverseNode(node.left,callback);
+                    // preOrderTraverseNode(node.right,callback);
+                }
+            }
+
+            this.preOrderTraverse = function(callback){
+                preOrderTraverseNode(root,callback)
+            }
+            //中序遍历
+            var inOrderTraverseNode = function(node,callback){
+                if(node!==null){
+                    var arr = [];
+                    arr.push(node);
+                    var obj = {};
+                    var f;
+                    while(arr[0]){
+                        if(arr[arr.length - 1].left && obj[arr[arr.length - 1].left.key] !== 1){
+                            arr.push(arr[arr.length - 1].left)
+                        }else{
+                            f = arr.pop();
+                            callback(f.key);
+                            obj[f.key] = 1;
+                            
+                            if(f.right && obj[f.right.key] !== 1){
+                                arr.push(f.right)
+                            }
+                            
+                        }
+                    }
+                    arr = null;
+                    obj = null;
+                    f = null;
+                    // inOrderTraverseNode(node.left,callback);
+                    // callback(node.key);
+                    // inOrderTraverseNode(node.right,callback);
+                }
+            }
+            this.inOrderTraverse = function(callback){
+                inOrderTraverseNode(root,callback)
+            }
+            //后序遍历
+            var postOrderTraverseNode = function(node,callback){
+                if(node !== null){
+                    var arr = [];
+                    var obj = {};
+                    var f;
+                    arr.push(node);
+                    var i = 10;
+                    while(arr[0]){
+                        node = arr[arr.length-1];
+                        if((node.right && !obj[node.right.key])||(node.left && !obj[node.left.key])){
+                            
+                            if(node.left && !obj[node.left.key]){
+                                arr.push(node.left);
+                            }else if(node.right && !obj[node.right.key]){
+                                arr.push(node.right);
+                            }
+                        }else{
+                            f = arr.pop();
+                            callback(f.key);
+                            obj[f.key] = 1;
+                        }
+                    }
+                    obj = null;
+                    // postOrderTraverseNode(node.left,callback);
+                    // postOrderTraverseNode(node.right,callback);
+                    // callback(node.key) 
+                }
+                
+            }
+            this.postOrderTraverse = function(callback){
+                postOrderTraverseNode(root,callback)
+            }
+            //查找最大二叉树节点
+            var maxNode = function(node) {
+                if(node){
+                    while(node && node.right !== null){
+                        node = node.right;
+                    }
+                
+                    return node;
+                }
+            }
+
+            this.max = function(){
+                return maxNode(root)
+            }
+            //查找最小二叉树节点
+            var minNode = function(node) {
+                if(node){
+                    while(node && node.left !== null){
+                        node = node.left;
+                    }
+                    return node;
+                }
+                    
+                
+            }
+            
+            this.min = function(){
+                return minNode(root)
+            }
+            //查找二叉树节点
+            var searchNode = function(node,key) {
+                if(node === null){
+                    return false;
+                }
+                while(node && key !== node.key){
+                    if(node.key < key){
+                        node = node.right || false;
+                    }else if(node.key > key){
+                        node = node.left || false;
+                    }
+                }
+                return node || false;
+            }
+
+            this.search = function(key) {
+                return searchNode(root,key)
+            }
+            //删除二叉树节点
+            var removeNode = function(node,key){
+                if(node === null){
+                    return false;
+                }
+                var arr = [];
+                
+                while(node && key !== node.key){
+                    arr.push(node)
+                    if(node.key < key){
+                        node = node.right || false;
+                    }else if(node.key > key){
+                        node = node.left || false;
+                    }
+                    
+                }
+                
+                if(!node){
+                    return false;
+                }
+                var oNode = arr.pop();
+                arr = null;
+                if(node.left == null && node.right == null){
+                    node = null;
+                }else if(!node.left && node.right){
+                    node = node.right;
+                }else if(!node.right && node.left){
+                    node = node.left;
+                }else{
+                    maxNode(node).right = node.right;
+                    node  = node.left;
+                }
+                if(oNode.left.key == key){
+                    oNode.left = node;
+                }else{
+                    oNode.right = node;
+                }
+            }
+            this.remove = function (key){
+                return removeNode(root,key);
+            }
+        }
+        //测试二叉树执行算法
+        function doIt(){
+            var nodes = [8, 3, 10, 1, 6, 14, 4, 7, 13];
+            
+            var binaryTreeg = new binaryTree();
+            nodes.forEach(function(key){
+                binaryTreeg.insert(key)
+            })
+            
+            var callback = function(key){
+                console.log(key)
+            }
+            binaryTreeg.preOrderTraverse(callback)
+            binaryTreeg.inOrderTraverse(callback)
+            binaryTreeg.postOrderTraverse(callback)
+            console.log(binaryTreeg,binaryTreeg.max(),binaryTreeg.min(),binaryTreeg.search(14),binaryTreeg.remove(3),binaryTreeg.min())
+        }
+        doIt()
+    </script>
+</body>
+</html>
